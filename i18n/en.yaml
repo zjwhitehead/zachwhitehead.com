@@ -1,5 +1,5 @@
 - id: title
-  translation: 'Adrián Moreno Peña · Web & Mobile Developer, all-around coder'
+  translation: 'Zach Whitehead · Web & Mobile Developer, all-around coder'
 
 - id: seo-desc
   translation: 'Professional website of Adrián Moreno, computer engineer based in Copenhagen (DK), with experience in mobile and web development, AdTech industry, and working with a variety of clients and sectors.'
@@ -23,10 +23,10 @@
   translation: Contact
 
 - id: intro
-  translation: "My online nickname is zetxek, and here you can find my résumé. You can read about some of the projects I worked on, my background, or get in contact."
+  translation: "My online nickname is zach_whitehead, and here you can find my résumé. You can read about some of the projects I worked on, my background, or get in contact."
 
 - id: welcome
-  translation: "Hi. I'm <strong>Adrián Moreno Peña</strong>."
+  translation: "Hi. I'm <strong>Zach Whitehead</strong>."
 
 - id: know-how
   translation: What can I do?
@@ -104,4 +104,4 @@
   translation: "Find me on ..."
 
 - id: copyright
-  translation: "Pst, you can <a target='_blank' href='https://github.com/zetxek/adrianmoreno.info/'>check the code online</a>"
+  translation: "Pst, you can <a target='_blank' href='https://github.com/zjwhitehead/zachwhitehead.com/'>check the code online</a>"

@@ -10,7 +10,7 @@ test('visit page and take screenshot', async ({ page }) => {
     // Change checklyhq.com to your site's URL,
     // or, even better, define a ENVIRONMENT_URL environment variable
     // to reuse it across your browser checks
-    const response = await page.goto('https://www.adrianmoreno.info')
+    const response = await page.goto('https://www.zachwhitehead.com')
 
     // Test that the response did not fail
     expect(response.status()).toBeLessThan(400)

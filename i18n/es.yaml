@@ -1,5 +1,5 @@
 - id: title
-  translation: 'Adrián Moreno Peña · Desarrollador móvil y web, programador en general'
+  translation: 'Zach Whitehead · Desarrollador móvil y web, programador en general'
 
 - id: seo-desc
   translation: 'Professional website of Adrián Moreno, computer engineer based in Amsterdam, with experience in mobile and web development, AdTech industry, and working with a variety of clients and sectors.'
@@ -9,7 +9,7 @@
 
 - id: lang_english
   translation: English
-  
+
 - id: lang_spanish
   translation: Español
 
@@ -23,10 +23,10 @@
   translation: Contacto
 
 - id: intro
-  translation: "Mi alias online es \"zetxek\", y este es mi CV online. Aquí puedes encontrar algunas de las cosas que he hecho, mi trayectoria profesional, contactar conmigo o encontarme en redes sociales."
+  translation: "Mi alias online es \"zach_whitehead\", y este es mi CV online. Aquí puedes encontrar algunas de las cosas que he hecho, mi trayectoria profesional, contactar conmigo o encontarme en redes sociales."
 
 - id: welcome
-  translation: "Hola. Soy <strong>Adrián Moreno Peña</strong>."
+  translation: "Hola. Soy <strong>Zach Whitehead</strong>."
 
 - id: know-how
   translation: Qué se hacer?
@@ -104,4 +104,4 @@
   translation: "Encuéntrame en redes sociales..."
 
 - id: copyright
-  translation: "Por cierto, el <a target='_blank' href='https://github.com/zetxek/adrianmoreno.info/'>código está disponible online</a>"
+  translation: "Por cierto, el <a target='_blank' href='https://github.com/zach_whitehead/adrianmoreno.info/'>código está disponible online</a>"

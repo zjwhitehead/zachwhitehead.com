@@ -2,12 +2,12 @@
   "name": "adrianmoreno.info",
   "version": "1.0.0",
   "description": "JS automations for adrianmoreno.info",
-  "homepage": "https://bitbucket.org/zetxek/adrianmoreno.info",
+  "homepage": "https://bitbucket.org/zach_whitehead/adrianmoreno.info",
   "repository": {
     "type": "git",
-    "url": "git+https://bitbucket.org/zetxek/adrianmoreno.info.git"
+    "url": "git+https://bitbucket.org/zach_whitehead/adrianmoreno.info.git"
   },
-  "author": "Adrián Moreno Peña <zetxek@gmail.com>",
+  "author": "Zach Whitehead",
   "license": "ISC",
   "devDependencies": {
     "autoprefixer": "^10.4.14",

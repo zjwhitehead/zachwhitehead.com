@@ -20,8 +20,8 @@ You can see it live in https://www.adrianmoreno.info (my personal website)
 
 ## Download
 
-- Clone the repo: `git clone https://github.com/zetxek/adritian-free-hugo-theme.git`.
-- [Download from Github](https://github.com/zetxek/raditian-free-hugo-theme/archive/master.zip).
+- Clone the repo: `git clone https://github.com/zach_whitehead/adritian-free-hugo-theme.git`.
+- [Download from Github](https://github.com/zach_whitehead/raditian-free-hugo-theme/archive/master.zip).
 
 ## Installation
 
@@ -31,15 +31,15 @@ You can see it live in https://www.adrianmoreno.info (my personal website)
 #### Create your personal website and run
     > hugo new site <your website's name>
     > cd <your website's name>/themes/
-    Clone the adritian-free-hugo-theme (git clone https://github.com/zetxek/adritian-free-hugo-theme.git).
+    Clone the adritian-free-hugo-theme (git clone https://github.com/zach_whitehead/adritian-free-hugo-theme.git).
     Replace the "config.toml" file that in the project's root directory with themes/adritian-free-hugo-theme/exampleSite/config.toml
     > hugo server -D
-    The theme is alive on http://localhost:1313/ 
+    The theme is alive on http://localhost:1313/
 
 ## License
 
-- Copyright 2020 Radity (https://radity.com/), 2022 Adrián Moreno Peña (https://www.adrianmoreno.info)
-- Licensed under MIT (https://github.com/zetxek/adritian-free-hugo-theme/blob/master/LICENSE)
+- Copyright 2020 Radity (https://radity.com/), 2022 Zach Whitehead (https://www.adrianmoreno.info)
+- Licensed under MIT (https://github.com/zach_whitehead/adritian-free-hugo-theme/blob/master/LICENSE)
 
 ## Support
 

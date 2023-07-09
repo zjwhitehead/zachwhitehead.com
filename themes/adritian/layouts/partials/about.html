@@ -4,7 +4,7 @@
     <div class="row d-flex flex-column-reverse flex-md-row">
       <div class="about__profile-picture col-12 col-md-6">
         {{ $img := resources.Get .Site.Data.homepage.about.image.x }}
-        {{ $img2x := resources.Get .Site.Data.homepage.about.image._2x }}      
+        {{ $img2x := resources.Get .Site.Data.homepage.about.image._2x }}
         {{ $imgWebp := $img.Resize (printf "%dx%d webp" $img.Height $img.Width) }}
         {{ $img2xWebp := $img.Resize (printf "%dx%d webp" $img2x.Height $img2x.Width) }}
         <picture>
@@ -18,7 +18,7 @@
             srcset="{{ $img.RelPermalink }} 1x, {{ $img2x.RelPermalink }} 2x"
             data-src="{{ $img.RelPermalink }}"
             data-srcset="{{ $img.RelPermalink }} 1x, {{ $img2x.RelPermalink }} 2x"
-            alt="Profile Picture of Adrián Moreno (@zetxek), working side by side with a colleague: sitting on a desk, while looking at a screen"
+            alt="Profile Picture of Zach Whitehead (@zach_whitehead)"
           />
         </picture>
       </div>
