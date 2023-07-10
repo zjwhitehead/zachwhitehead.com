@@ -33,6 +33,9 @@ showcase:
     - icon: "instagram"
       URL: "https://www.instagram.com/zach.whitehead"
 
+    - icon: "mastodon"
+      URL: "https://mastodon.social/@zach_whitehead"
+
 # about
 about:
   enable: false

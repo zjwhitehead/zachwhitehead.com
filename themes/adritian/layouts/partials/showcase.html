@@ -48,13 +48,13 @@
     <div class="row platform-links">
       <div class="col-12">
         {{ range .Site.Data.homepage.showcase.socialLinks }}
-        <a href="{{ .URL | absURL }}" target="_blank" rel="noopener noreferrer" aria-label="{{ .icon }}"
+        <a href="{{ .URL | absURL }}" target="_blank" rel="noopener noreferrer me" aria-label="{{ .icon }}"
           ><i class="icon-{{ .icon }}-line"></i
         ></a>
         {{ end }}
       </div>
     </div>
   </div>
-  
+
 </section>
 {{ end }}
