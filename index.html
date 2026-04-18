@@ -1,0 +1,257 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Zach Whitehead · Software, Commerce, Flight</title>
+<meta name="description" content="Zach Whitehead — 15 years shipping software, commerce, and hardware for teams that make things. Based in Austin, TX." />
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div class="bg-fade"></div>
+<canvas class="bg-fixed" id="particles"></canvas>
+
+<nav class="top">
+  <div class="nav-inner">
+    <a class="logo" href="#top">ZACH WHITEHEAD</a>
+    <div class="nav-links" id="navLinks">
+      <a href="#about">About</a>
+      <a href="#services">Services</a>
+      <a href="#aviation">Aviation</a>
+      <a href="#work">Work</a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="navLinks">
+      <span></span><span></span><span></span>
+    </button>
+    <a href="#contact" class="nav-cta">Get in touch</a>
+  </div>
+</nav>
+
+<main id="top">
+
+  <section class="sec hero">
+    <div class="wrap">
+      <div class="hero-inner">
+        <h1>
+          Zach<br/>
+          Whitehead<span class="dot">.</span>
+        </h1>
+        <p class="role">
+          <span>Software</span><span class="div">/</span>
+          <span>Commerce</span><span class="div">/</span>
+          <span>Hardware</span><span class="div">/</span>
+          <span class="hl">Pilot</span>
+        </p>
+        <p class="lede">
+          15 years of shipping for teams big and small that make things. <b>Marketplaces</b>, <b>storefronts</b>, <b>firmware</b>, and the operational glue in between. Based in Austin, TX.
+        </p>
+        <div class="cta-row">
+          <a href="#work" class="btn primary">See the work <span>→</span></a>
+          <a href="#contact" class="btn ghost">Start a project</a>
+        </div>
+        <div class="hero-meta">
+          <span class="chip">Full stack</span>
+          <span class="chip">15 years</span>
+          <span class="chip">Austin, TX &middot; KAUS</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="scroll-hint"><span>scroll</span><span class="line"></span></div>
+  </section>
+
+  <section class="sec" id="about">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-num">01 /</span>
+        <h2 class="sec-title">About</h2>
+        <span class="sec-sub">who / what / why</span>
+      </div>
+
+      <div class="about-grid">
+        <div>
+          <p class="about-lead">
+            A decade of shipping for teams big and small: <b>OpenPPG</b>, <b>Throwflame</b>, <b>RVshare</b>, and a long tail of independents.
+          </p>
+          <div class="about-body" style="margin-top:28px">
+            <p>I was founding engineer at <b style="color:var(--ink)">RVshare</b>, where the team went on to raise over $100M from firms like KKR. Since then I have split my time between small product shops and my own builds, writing the code, shaping the business, and on good weekends, flying.</p>
+            <p>My edge is working across the whole stack a company has: the storefront, the firmware, the ops inbox, and the spreadsheet that keeps it all together. A checkout that converts, a controller that does not brick in the field, a marketplace that keeps both sides happy. Quiet wins.</p>
+          </div>
+        </div>
+
+        <div class="photo" style="aspect-ratio:4/3">
+          <span class="corner tl"></span><span class="corner tr"></span>
+          <span class="corner bl"></span><span class="corner br"></span>
+          <img src="assets/zach-plane.jpg" alt="Zach next to a Pipistrel light sport aircraft at the airfield" loading="lazy" width="1200" height="900"/>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="services">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-num">02 /</span>
+        <h2 class="sec-title">Services</h2>
+        <span class="sec-sub">what I do</span>
+      </div>
+
+      <div class="svc-grid">
+        <div class="svc">
+          <div class="svc-num">01</div>
+          <h3>Full-stack engineering</h3>
+          <p>End-to-end web builds, APIs, integrations, and infrastructure. Modern stacks, pragmatic choices, deployed and monitored.</p>
+        </div>
+        <div class="svc">
+          <div class="svc-num">02</div>
+          <h3>E-commerce &amp; marketplaces</h3>
+          <p>Storefronts, peer-to-peer rental flows, payments, fulfillment, and the ops tooling that keeps orders moving.</p>
+        </div>
+        <div class="svc">
+          <div class="svc-num">03</div>
+          <h3>Product &amp; business development</h3>
+          <p>Pricing, partnerships, and go-to-market for small teams. I have helped founders figure out what to build and what to charge.</p>
+        </div>
+        <div class="svc">
+          <div class="svc-num">04</div>
+          <h3>Electrical &amp; firmware</h3>
+          <p>Hardware and software crossover work: sensors, controllers, BLE, field testing, and pushing updates to devices in the wild.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="aviation">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-num">03 /</span>
+        <h2 class="sec-title">Aviation</h2>
+        <span class="sec-sub">the passion</span>
+      </div>
+
+      <div class="av">
+        <div class="av-hero">
+          <img src="assets/plane.jpg" alt="Cockpit view at golden hour" width="2100" height="900"/>
+          <div class="av-hero-text">
+            <h3>Built on the ground, <em>tested in the sky.</em></h3>
+            <p>Flying sharpens the rest of the work. A controller that holds up at 2,000 feet, with battery and weather on the line, holds up on a workbench too.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="work">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-num">04 /</span>
+        <h2 class="sec-title">Selected work</h2>
+        <span class="sec-sub">case studies</span>
+      </div>
+
+      <div class="work-grid">
+        <a class="case" href="https://openppg.com" target="_blank" rel="noopener">
+          <div class="case-img">
+            <span class="case-tag">Firmware &middot; Web &middot; Commerce</span>
+            <img src="assets/pcb.jpg" alt="OpenPPG controller PCB" loading="lazy" width="1200" height="750"/>
+          </div>
+          <div class="case-body">
+            <div class="case-head">
+              <h3>OpenPPG</h3>
+              <span class="arrow">CASE 01 →</span>
+            </div>
+            <p class="kicker">Open-source electric paramotors. Firmware, Bluetooth telemetry, the storefront, and the global dealer network behind it.</p>
+            <div class="case-meta"><span>ESP32</span><span>BLE</span><span>Shopify</span><span>Community</span></div>
+          </div>
+        </a>
+
+        <a class="case" href="https://throwflame.com" target="_blank" rel="noopener">
+          <div class="case-img">
+            <span class="case-tag">E-com &middot; Ops &middot; Integrations</span>
+            <img src="assets/throwflame.jpg" alt="Throwflame Thermonator robot" loading="lazy" width="1200" height="750"/>
+          </div>
+          <div class="case-body">
+            <div class="case-head">
+              <h3>Throwflame</h3>
+              <span class="arrow">CASE 02 →</span>
+            </div>
+            <p class="kicker">Consumer and industrial flamethrowers, plus the Thermonator robotic platform. Storefront, compliance flows, and fulfillment tooling.</p>
+            <div class="case-meta"><span>Shopify</span><span>Compliance</span><span>Ops</span><span>B2B</span></div>
+          </div>
+        </a>
+
+        <a class="case" href="https://rvshare.com" target="_blank" rel="noopener">
+          <div class="case-img">
+            <span class="case-tag">Marketplace &middot; Payments &middot; Scale</span>
+            <img src="assets/rvshare.jpg" alt="Airstream under the stars, RVshare" loading="lazy" width="1200" height="750"/>
+          </div>
+          <div class="case-body">
+            <div class="case-head">
+              <h3>RVshare</h3>
+              <span class="arrow">CASE 03 →</span>
+            </div>
+            <p class="kicker">Peer-to-peer RV rental marketplace. Worked across payments, trust and safety, and search relevance during high-growth years.</p>
+            <div class="case-meta"><span>Rails</span><span>Stripe</span><span>Search</span><span>P2P</span></div>
+          </div>
+        </a>
+
+        <a class="case" href="#">
+          <div class="case-img">
+            <span class="case-tag">Strategy &middot; Build &middot; Ship</span>
+            <div class="case-placeholder">10+ clients</div>
+          </div>
+          <div class="case-body">
+            <div class="case-head">
+              <h3>Freelance roster</h3>
+              <span class="arrow">CASE 04 →</span>
+            </div>
+            <p class="kicker">A decade of small businesses who needed one person to write the code, draft the plan, and hand back something that ships.</p>
+            <div class="case-meta"><span>Startups</span><span>SMB</span><span>DTC</span><span>Hardware</span></div>
+          </div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="contact">
+    <div class="wrap">
+      <div class="sec-head">
+        <span class="sec-num">05 /</span>
+        <h2 class="sec-title">Contact</h2>
+        <span class="sec-sub">say hello</span>
+      </div>
+
+      <div class="contact">
+        <div>
+          <h3>Small team, messy problem, <em>shipping deadline?</em></h3>
+          <p class="sub">That is my corner. Bonus points if it involves hardware, flight, or a marketplace on fire. I read every inbound.</p>
+          <p class="email">hello@zachwhitehead.com</p>
+        </div>
+        <div class="social-list">
+          <a href="https://github.com/zjwhitehead" target="_blank" rel="noopener"><span>GitHub</span><span class="arr">↗</span></a>
+          <a href="https://www.linkedin.com/in/zwhitehead/" target="_blank" rel="noopener"><span>LinkedIn</span><span class="arr">↗</span></a>
+          <a href="https://x.com/zach_whitehead" target="_blank" rel="noopener"><span>X / Twitter</span><span class="arr">↗</span></a>
+          <a href="mailto:hello@zachwhitehead.com"><span>Email</span><span class="arr">↗</span></a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap foot-inner">
+      <span>&copy; 2026 <span class="accent">ZACH WHITEHEAD</span></span>
+      <span>BUILT IN AUSTIN, TX</span>
+      <span>LAST UPDATE &middot; APR 2026</span>
+    </div>
+  </footer>
+</main>
+
+<script src="script.js"></script>
+
+</body>
+</html>
