@@ -32,7 +32,7 @@
       anchor: [0.10, 0.67],
       points: [[0.00, 0.02], [0.06, 0.00], [0.12, 0.03], [0.08, 0.10]],
       links: [[0, 1], [1, 2], [2, 3]],
-      warm: true,
+      warm: false,
     },
     {
       anchor: [0.70, 0.63],
@@ -320,6 +320,79 @@
              a.y + a.h + pad < b.y || b.y + b.h + pad < a.y);
   }
 
+  function drawIC(bc, cp) {
+    bc.fillStyle = IC_FILL;
+    bc.fillRect(cp.x, cp.y, cp.w, cp.h);
+    bc.strokeStyle = SILK;
+    bc.lineWidth = 0.9;
+    bc.strokeRect(cp.x + 0.5, cp.y + 0.5, cp.w - 1, cp.h - 1);
+    bc.fillStyle = SILK_DIM;
+    const pin1r = Math.min(1.6, cp.h * 0.14);
+    bc.beginPath();
+    bc.arc(cp.x + Math.min(6, cp.w * 0.2), cp.y + Math.min(6, cp.h * 0.3), pin1r, 0, Math.PI * 2);
+    bc.fill();
+    if (cp.h >= 22) {
+      bc.fillStyle = SILK;
+      bc.font = '600 8px "JetBrains Mono", ui-monospace, monospace';
+      bc.textBaseline = 'top';
+      bc.textAlign = 'left';
+      bc.fillText(cp.label, cp.x + 4, cp.y + cp.h - 11);
+    }
+
+    const pinSpacing = cp.pinSpacing;
+    const pinsTop = Math.floor((cp.w - 6) / pinSpacing);
+    if (pinsTop < 1) return;
+    const pinW = pinSpacing >= 9 ? 4 : 2.2;
+    const pinLen = pinSpacing >= 9 ? 5 : 3;
+    for (let i = 0; i < pinsTop; i++) {
+      const px = cp.x + 3 + i * pinSpacing + (cp.w - 6 - (pinsTop - 1) * pinSpacing) / 2;
+      bc.fillStyle = GOLD;
+      bc.fillRect(px - pinW / 2, cp.y - pinLen + 1, pinW, pinLen);
+      bc.fillRect(px - pinW / 2, cp.y + cp.h - 1, pinW, pinLen);
+      bc.fillStyle = GOLD_HI;
+      bc.fillRect(px - pinW / 2, cp.y - pinLen + 1, pinW, 1);
+      bc.fillRect(px - pinW / 2, cp.y + cp.h - 1, pinW, 1);
+    }
+  }
+
+  function drawPassive(bc, cp, bodyColor, highlight) {
+    const endW = 1.6;
+    bc.fillStyle = '#c7cbcf';
+    if (cp.horiz) {
+      bc.fillRect(cp.x, cp.y, endW, cp.h);
+      bc.fillRect(cp.x + cp.w - endW, cp.y, endW, cp.h);
+      bc.fillStyle = bodyColor;
+      bc.fillRect(cp.x + endW, cp.y, cp.w - endW * 2, cp.h);
+      bc.fillStyle = highlight;
+      bc.fillRect(cp.x + endW, cp.y, cp.w - endW * 2, 1);
+    } else {
+      bc.fillRect(cp.x, cp.y, cp.w, endW);
+      bc.fillRect(cp.x, cp.y + cp.h - endW, cp.w, endW);
+      bc.fillStyle = bodyColor;
+      bc.fillRect(cp.x, cp.y + endW, cp.w, cp.h - endW * 2);
+      bc.fillStyle = highlight;
+      bc.fillRect(cp.x, cp.y + endW, 1, cp.h - endW * 2);
+    }
+  }
+
+  function drawTantalum(bc, cp) {
+    bc.fillStyle = '#c38a2a';
+    bc.fillRect(cp.x, cp.y, cp.w, cp.h);
+    bc.fillStyle = 'rgba(255,230,160,0.22)';
+    if (cp.horiz) {
+      bc.fillRect(cp.x, cp.y, cp.w, 1);
+      bc.fillStyle = 'rgba(245,245,245,0.85)';
+      bc.fillRect(cp.x + cp.w - 2.4, cp.y + 1, 1.8, cp.h - 2);
+    } else {
+      bc.fillRect(cp.x, cp.y, 1, cp.h);
+      bc.fillStyle = 'rgba(245,245,245,0.85)';
+      bc.fillRect(cp.x + 1, cp.y + cp.h - 2.4, cp.w - 2, 1.8);
+    }
+    bc.strokeStyle = 'rgba(0,0,0,0.45)';
+    bc.lineWidth = 0.5;
+    bc.strokeRect(cp.x + 0.25, cp.y + 0.25, cp.w - 0.5, cp.h - 0.5);
+  }
+
   function build() {
     nodes = [];
     traces = [];
@@ -343,19 +416,54 @@
       }
     }
 
-    const icCount = Math.max(2, Math.min(4, Math.floor((W * H) / 150000)));
-    const minGap = 20;
-    let attempts = 0;
-    while (components.length < icCount && attempts < 60) {
-      attempts++;
-      const w = 70 + Math.floor(Math.random() * 80);
-      const h = 42 + Math.floor(Math.random() * 28);
-      const x = 30 + Math.floor(Math.random() * (W - w - 60));
-      const y = 28 + Math.floor(Math.random() * (H - h - 48));
-      const candidate = { x, y, w, h, label: `U${components.length + 1}` };
-      if (components.some(c => rectOverlap(c, candidate, minGap))) continue;
-      components.push(candidate);
+    let icIndex = 1;
+    function tryPlace(count, factory, minGap) {
+      let attempts = 0;
+      const start = components.length;
+      while (components.length - start < count && attempts < 80) {
+        attempts++;
+        const spec = factory();
+        const x = 26 + Math.floor(Math.random() * (W - spec.w - 52));
+        const y = 24 + Math.floor(Math.random() * (H - spec.h - 46));
+        const candidate = { ...spec, x, y };
+        if (components.some(c => rectOverlap(c, candidate, minGap))) continue;
+        components.push(candidate);
+      }
     }
+
+    const largeICCount = Math.max(1, Math.min(2, Math.floor((W * H) / 220000)));
+    tryPlace(largeICCount, () => ({
+      type: 'ic',
+      w: 95 + Math.floor(Math.random() * 50),
+      h: 52 + Math.floor(Math.random() * 22),
+      pinSpacing: 10,
+      label: `U${icIndex++}`,
+    }), 22);
+
+    const smallICCount = Math.max(1, Math.min(3, Math.floor((W * H) / 160000)));
+    tryPlace(smallICCount, () => ({
+      type: 'ic',
+      w: 28 + Math.floor(Math.random() * 10),
+      h: 14 + Math.floor(Math.random() * 4),
+      pinSpacing: 5,
+      label: `U${icIndex++}`,
+    }), 14);
+
+    const passiveCount = Math.max(10, Math.floor((W * H) / 26000));
+    tryPlace(passiveCount, () => {
+      const roll = Math.random();
+      const horiz = Math.random() > 0.5;
+      let type, len, wid;
+      if (roll < 0.5) { type = 'r'; len = 11; wid = 5; }
+      else if (roll < 0.85) { type = 'c'; len = 11; wid = 5; }
+      else { type = 't'; len = 13; wid = 7; }
+      return {
+        type,
+        w: horiz ? len : wid,
+        h: horiz ? wid : len,
+        horiz,
+      };
+    }, 6);
 
     const blocked = (x, y) => components.some(c =>
       x >= c.x - 8 && x <= c.x + c.w + 8 && y >= c.y - 8 && y <= c.y + c.h + 8);
@@ -363,10 +471,12 @@
     nodes = nodes.filter(n => !blocked(n.x, n.y));
 
     for (const cp of components) {
-      const pinSpacing = 10;
-      const pinsTop = Math.floor((cp.w - 10) / pinSpacing);
+      if (cp.type !== 'ic') continue;
+      const pinSpacing = cp.pinSpacing;
+      const pinsTop = Math.floor((cp.w - 6) / pinSpacing);
+      if (pinsTop < 1) continue;
       for (let i = 0; i < pinsTop; i++) {
-        const px = cp.x + 5 + i * pinSpacing + (cp.w - 10 - (pinsTop - 1) * pinSpacing) / 2;
+        const px = cp.x + 3 + i * pinSpacing + (cp.w - 6 - (pinsTop - 1) * pinSpacing) / 2;
         nodes.push({ id: `ic_${cp.label}_t${i}`, x: Math.round(px), y: cp.y, isPin: true, isTop: true });
         nodes.push({ id: `ic_${cp.label}_b${i}`, x: Math.round(px), y: cp.y + cp.h, isPin: true, isBottom: true });
       }
@@ -399,18 +509,19 @@
     }
 
     for (const cp of components) {
+      if (cp.type !== 'ic') continue;
       const pins = nodes.filter(n => n.isPin && n.id.startsWith(`ic_${cp.label}_`));
       for (const p of pins) {
         const stub = p.isTop
-          ? { x: p.x, y: p.y - 12 }
-          : { x: p.x, y: p.y + 12 };
+          ? { x: p.x, y: p.y - 10 }
+          : { x: p.x, y: p.y + 10 };
         let target = null;
         let best = Infinity;
         for (const g of gridNodes) {
           const d = Math.abs(g.x - stub.x) + Math.abs(g.y - stub.y);
-          if (d < best && d < 140) { best = d; target = g; }
+          if (d < best && d < 120) { best = d; target = g; }
         }
-        if (target && Math.random() > 0.35) {
+        if (target && Math.random() > 0.4) {
           const bend = { x: stub.x, y: target.y };
           traces.push(buildTrace([
             { x: p.x, y: p.y },
@@ -426,14 +537,15 @@
 
     if (traces.length === 0) return;
 
-    const pulseCount = Math.min(traces.length, Math.max(12, Math.floor(traces.length * 0.45)));
+    const pulseCount = Math.max(3, Math.min(7, Math.floor(traces.length * 0.04)));
     for (let i = 0; i < pulseCount; i++) {
       const tr = traces[Math.floor(Math.random() * traces.length)];
       pulses.push({
         tr,
         d: Math.random() * tr.total,
-        speed: 55 + Math.random() * 90,
-        intensity: 0.6 + Math.random() * 0.4,
+        speed: 55 + Math.random() * 80,
+        intensity: 0.55 + Math.random() * 0.35,
+        wait: Math.random() * 2.2,
       });
     }
 
@@ -490,31 +602,10 @@
     }
 
     for (const cp of components) {
-      bc.fillStyle = IC_FILL;
-      bc.fillRect(cp.x, cp.y, cp.w, cp.h);
-      bc.strokeStyle = SILK;
-      bc.lineWidth = 0.9;
-      bc.strokeRect(cp.x + 0.5, cp.y + 0.5, cp.w - 1, cp.h - 1);
-      bc.fillStyle = SILK_DIM;
-      bc.beginPath();
-      bc.arc(cp.x + 6, cp.y + 6, 1.6, 0, Math.PI * 2);
-      bc.fill();
-      bc.fillStyle = SILK;
-      bc.font = '600 8px "JetBrains Mono", ui-monospace, monospace';
-      bc.textBaseline = 'top';
-      bc.fillText(cp.label, cp.x + 4, cp.y + cp.h - 11);
-
-      const pinSpacing = 10;
-      const pinsTop = Math.floor((cp.w - 10) / pinSpacing);
-      for (let i = 0; i < pinsTop; i++) {
-        const px = cp.x + 5 + i * pinSpacing + (cp.w - 10 - (pinsTop - 1) * pinSpacing) / 2;
-        bc.fillStyle = GOLD;
-        bc.fillRect(px - 2, cp.y - 4, 4, 5);
-        bc.fillRect(px - 2, cp.y + cp.h - 1, 4, 5);
-        bc.fillStyle = GOLD_HI;
-        bc.fillRect(px - 2, cp.y - 4, 4, 1);
-        bc.fillRect(px - 2, cp.y + cp.h - 1, 4, 1);
-      }
+      if (cp.type === 'ic') drawIC(bc, cp);
+      else if (cp.type === 'r') drawPassive(bc, cp, '#161110', 'rgba(230,230,230,0.16)');
+      else if (cp.type === 'c') drawPassive(bc, cp, '#9d7a3e', 'rgba(255,240,210,0.12)');
+      else if (cp.type === 't') drawTantalum(bc, cp);
     }
 
     for (const n of nodes) {
@@ -572,27 +663,33 @@
     if (bg) ctx.drawImage(bg, 0, 0, W, H);
 
     for (const p of pulses) {
+      if (p.wait > 0) {
+        if (!reduceMotion) p.wait -= dt;
+        continue;
+      }
       if (!reduceMotion) p.d += p.speed * dt;
       if (p.d > p.tr.total) {
         p.d = 0;
         p.tr = traces[Math.floor(Math.random() * traces.length)];
-        p.speed = 55 + Math.random() * 90;
-        p.intensity = 0.6 + Math.random() * 0.4;
+        p.speed = 55 + Math.random() * 80;
+        p.intensity = 0.55 + Math.random() * 0.35;
+        p.wait = 0.8 + Math.random() * 2.4;
+        continue;
       }
       const pos = posAt(p.tr, p.d);
 
-      const g = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, 14);
-      g.addColorStop(0, `rgba(255, 245, 180, ${0.85 * p.intensity})`);
-      g.addColorStop(0.35, `rgba(240, 200, 60, ${0.42 * p.intensity})`);
+      const g = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, 11);
+      g.addColorStop(0, `rgba(255, 245, 180, ${0.7 * p.intensity})`);
+      g.addColorStop(0.4, `rgba(240, 200, 60, ${0.28 * p.intensity})`);
       g.addColorStop(1, 'rgba(240, 200, 60, 0)');
       ctx.fillStyle = g;
       ctx.beginPath();
-      ctx.arc(pos.x, pos.y, 14, 0, Math.PI * 2);
+      ctx.arc(pos.x, pos.y, 11, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.fillStyle = `rgba(255, 253, 230, ${Math.min(1, p.intensity + 0.2)})`;
+      ctx.fillStyle = `rgba(255, 253, 230, ${Math.min(0.85, p.intensity + 0.15)})`;
       ctx.beginPath();
-      ctx.arc(pos.x, pos.y, 1.7, 0, Math.PI * 2);
+      ctx.arc(pos.x, pos.y, 1.5, 0, Math.PI * 2);
       ctx.fill();
     }
 
