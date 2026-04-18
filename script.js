@@ -264,18 +264,23 @@
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  const MASK = '#0a2a18';
+  const MASK_SHADE = '#071e11';
+  const COPPER = '#1f7a38';
+  const COPPER_CORE = '#2fa54d';
+  const GOLD = '#c9a449';
+  const GOLD_HI = '#f0d37a';
+  const SILK = 'rgba(228, 224, 204, 0.7)';
+  const SILK_DIM = 'rgba(228, 224, 204, 0.35)';
+  const DRILL = '#070806';
+  const IC_FILL = '#0d1c10';
+
   let W = 0, H = 0;
   let nodes = [];
   let traces = [];
   let pulses = [];
+  let components = [];
   let bg = null;
-
-  function accentRGB() {
-    const c = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#009dff';
-    const m = c.match(/#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})/i);
-    if (!m) return [0, 157, 255];
-    return [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)];
-  }
 
   function buildTrace(pts) {
     const segs = [];
@@ -310,55 +315,125 @@
     build();
   }
 
+  function rectOverlap(a, b, pad) {
+    return !(a.x + a.w + pad < b.x || b.x + b.w + pad < a.x ||
+             a.y + a.h + pad < b.y || b.y + b.h + pad < a.y);
+  }
+
   function build() {
     nodes = [];
     traces = [];
     pulses = [];
+    components = [];
 
-    const cellW = W < 700 ? 80 : 110;
-    const cellH = W < 700 ? 72 : 92;
-    const cols = Math.max(2, Math.floor(W / cellW));
-    const rows = Math.max(2, Math.floor(H / cellH));
+    const cellW = W < 700 ? 64 : 86;
+    const cellH = W < 700 ? 58 : 74;
+    const cols = Math.max(3, Math.floor(W / cellW));
+    const rows = Math.max(3, Math.floor(H / cellH));
     const grid = {};
 
     for (let c = 0; c <= cols; c++) {
       for (let r = 0; r <= rows; r++) {
-        if (Math.random() > 0.6) continue;
-        const x = (c / cols) * W + (Math.random() - 0.5) * 14;
-        const y = (r / rows) * H + (Math.random() - 0.5) * 10;
+        if (Math.random() > 0.72) continue;
+        const x = Math.round((c / cols) * (W - 40)) + 20;
+        const y = Math.round((r / rows) * (H - 40)) + 20;
         const n = { id: `${c},${r}`, c, r, x, y };
         grid[n.id] = n;
         nodes.push(n);
       }
     }
 
-    for (const n of nodes) {
+    const icCount = Math.max(2, Math.min(4, Math.floor((W * H) / 150000)));
+    const minGap = 20;
+    let attempts = 0;
+    while (components.length < icCount && attempts < 60) {
+      attempts++;
+      const w = 70 + Math.floor(Math.random() * 80);
+      const h = 42 + Math.floor(Math.random() * 28);
+      const x = 30 + Math.floor(Math.random() * (W - w - 60));
+      const y = 28 + Math.floor(Math.random() * (H - h - 48));
+      const candidate = { x, y, w, h, label: `U${components.length + 1}` };
+      if (components.some(c => rectOverlap(c, candidate, minGap))) continue;
+      components.push(candidate);
+    }
+
+    const blocked = (x, y) => components.some(c =>
+      x >= c.x - 8 && x <= c.x + c.w + 8 && y >= c.y - 8 && y <= c.y + c.h + 8);
+
+    nodes = nodes.filter(n => !blocked(n.x, n.y));
+
+    for (const cp of components) {
+      const pinSpacing = 10;
+      const pinsTop = Math.floor((cp.w - 10) / pinSpacing);
+      for (let i = 0; i < pinsTop; i++) {
+        const px = cp.x + 5 + i * pinSpacing + (cp.w - 10 - (pinsTop - 1) * pinSpacing) / 2;
+        nodes.push({ id: `ic_${cp.label}_t${i}`, x: Math.round(px), y: cp.y, isPin: true, isTop: true });
+        nodes.push({ id: `ic_${cp.label}_b${i}`, x: Math.round(px), y: cp.y + cp.h, isPin: true, isBottom: true });
+      }
+    }
+
+    const gridNodes = nodes.filter(n => !n.isPin);
+    for (const n of gridNodes) {
       const right = grid[`${n.c + 1},${n.r}`];
       const down = grid[`${n.c},${n.r + 1}`];
       const dr = grid[`${n.c + 1},${n.r + 1}`];
       const ur = grid[`${n.c + 1},${n.r - 1}`];
-      if (right && Math.random() > 0.25) traces.push(buildTrace([n, right]));
-      if (down && Math.random() > 0.25) traces.push(buildTrace([n, down]));
-      if (dr && Math.random() > 0.65) {
-        const bend = Math.random() < 0.5 ? { x: dr.x, y: n.y } : { x: n.x, y: dr.y };
-        traces.push(buildTrace([n, bend, dr]));
+      if (right && !blocked(right.x, n.y) && Math.random() > 0.22) {
+        traces.push(buildTrace([{ x: n.x, y: n.y }, { x: right.x, y: n.y }]));
       }
-      if (ur && Math.random() > 0.7) {
+      if (down && !blocked(n.x, down.y) && Math.random() > 0.22) {
+        traces.push(buildTrace([{ x: n.x, y: n.y }, { x: n.x, y: down.y }]));
+      }
+      if (dr && Math.random() > 0.58) {
+        const bend = Math.random() < 0.5 ? { x: dr.x, y: n.y } : { x: n.x, y: dr.y };
+        if (!blocked(bend.x, bend.y) && !blocked(dr.x, dr.y)) {
+          traces.push(buildTrace([{ x: n.x, y: n.y }, bend, { x: dr.x, y: dr.y }]));
+        }
+      }
+      if (ur && Math.random() > 0.65) {
         const bend = Math.random() < 0.5 ? { x: ur.x, y: n.y } : { x: n.x, y: ur.y };
-        traces.push(buildTrace([n, bend, ur]));
+        if (!blocked(bend.x, bend.y) && !blocked(ur.x, ur.y)) {
+          traces.push(buildTrace([{ x: n.x, y: n.y }, bend, { x: ur.x, y: ur.y }]));
+        }
+      }
+    }
+
+    for (const cp of components) {
+      const pins = nodes.filter(n => n.isPin && n.id.startsWith(`ic_${cp.label}_`));
+      for (const p of pins) {
+        const stub = p.isTop
+          ? { x: p.x, y: p.y - 12 }
+          : { x: p.x, y: p.y + 12 };
+        let target = null;
+        let best = Infinity;
+        for (const g of gridNodes) {
+          const d = Math.abs(g.x - stub.x) + Math.abs(g.y - stub.y);
+          if (d < best && d < 140) { best = d; target = g; }
+        }
+        if (target && Math.random() > 0.35) {
+          const bend = { x: stub.x, y: target.y };
+          traces.push(buildTrace([
+            { x: p.x, y: p.y },
+            stub,
+            bend,
+            { x: target.x, y: target.y },
+          ]));
+        } else {
+          traces.push(buildTrace([{ x: p.x, y: p.y }, stub]));
+        }
       }
     }
 
     if (traces.length === 0) return;
 
-    const pulseCount = Math.min(traces.length, Math.max(10, Math.floor(traces.length * 0.4)));
+    const pulseCount = Math.min(traces.length, Math.max(12, Math.floor(traces.length * 0.45)));
     for (let i = 0; i < pulseCount; i++) {
       const tr = traces[Math.floor(Math.random() * traces.length)];
       pulses.push({
         tr,
         d: Math.random() * tr.total,
-        speed: 40 + Math.random() * 70,
-        intensity: 0.55 + Math.random() * 0.45,
+        speed: 55 + Math.random() * 90,
+        intensity: 0.6 + Math.random() * 0.4,
       });
     }
 
@@ -367,18 +442,43 @@
     bg.height = H * dpr;
     const bc = bg.getContext('2d');
     bc.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const [ar, ag, ab] = accentRGB();
 
-    const gridSize = 22;
-    bc.fillStyle = `rgba(${ar},${ag},${ab},0.055)`;
-    for (let x = gridSize / 2; x < W; x += gridSize) {
-      for (let y = gridSize / 2; y < H; y += gridSize) {
-        bc.fillRect(x - 0.5, y - 0.5, 1, 1);
+    const mask = bc.createLinearGradient(0, 0, W, H);
+    mask.addColorStop(0, MASK);
+    mask.addColorStop(1, MASK_SHADE);
+    bc.fillStyle = mask;
+    bc.fillRect(0, 0, W, H);
+
+    const noiseCount = Math.floor((W * H) / 350);
+    for (let i = 0; i < noiseCount; i++) {
+      const x = Math.random() * W;
+      const y = Math.random() * H;
+      bc.fillStyle = Math.random() > 0.55 ? 'rgba(255,255,255,0.012)' : 'rgba(0,0,0,0.06)';
+      bc.fillRect(x, y, 1, 1);
+    }
+
+    bc.fillStyle = 'rgba(47, 165, 77, 0.07)';
+    for (let x = 14; x < W; x += 30) {
+      for (let y = 14; y < H; y += 30) {
+        bc.fillRect(x - 0.4, y - 0.4, 0.8, 0.8);
       }
     }
 
-    bc.lineWidth = 1.15;
-    bc.strokeStyle = `rgba(${ar},${ag},${ab},0.18)`;
+    bc.lineCap = 'butt';
+    bc.lineJoin = 'miter';
+    bc.strokeStyle = COPPER;
+    bc.lineWidth = 3;
+    for (const tr of traces) {
+      bc.beginPath();
+      for (let i = 0; i < tr.pts.length; i++) {
+        const p = tr.pts[i];
+        if (i === 0) bc.moveTo(p.x, p.y);
+        else bc.lineTo(p.x, p.y);
+      }
+      bc.stroke();
+    }
+    bc.strokeStyle = COPPER_CORE;
+    bc.lineWidth = 1.1;
     for (const tr of traces) {
       bc.beginPath();
       for (let i = 0; i < tr.pts.length; i++) {
@@ -389,16 +489,73 @@
       bc.stroke();
     }
 
-    for (const n of nodes) {
-      bc.fillStyle = `rgba(${ar},${ag},${ab},0.55)`;
+    for (const cp of components) {
+      bc.fillStyle = IC_FILL;
+      bc.fillRect(cp.x, cp.y, cp.w, cp.h);
+      bc.strokeStyle = SILK;
+      bc.lineWidth = 0.9;
+      bc.strokeRect(cp.x + 0.5, cp.y + 0.5, cp.w - 1, cp.h - 1);
+      bc.fillStyle = SILK_DIM;
       bc.beginPath();
-      bc.arc(n.x, n.y, 2.6, 0, Math.PI * 2);
+      bc.arc(cp.x + 6, cp.y + 6, 1.6, 0, Math.PI * 2);
       bc.fill();
-      bc.fillStyle = `rgba(10,11,13,0.82)`;
+      bc.fillStyle = SILK;
+      bc.font = '600 8px "JetBrains Mono", ui-monospace, monospace';
+      bc.textBaseline = 'top';
+      bc.fillText(cp.label, cp.x + 4, cp.y + cp.h - 11);
+
+      const pinSpacing = 10;
+      const pinsTop = Math.floor((cp.w - 10) / pinSpacing);
+      for (let i = 0; i < pinsTop; i++) {
+        const px = cp.x + 5 + i * pinSpacing + (cp.w - 10 - (pinsTop - 1) * pinSpacing) / 2;
+        bc.fillStyle = GOLD;
+        bc.fillRect(px - 2, cp.y - 4, 4, 5);
+        bc.fillRect(px - 2, cp.y + cp.h - 1, 4, 5);
+        bc.fillStyle = GOLD_HI;
+        bc.fillRect(px - 2, cp.y - 4, 4, 1);
+        bc.fillRect(px - 2, cp.y + cp.h - 1, 4, 1);
+      }
+    }
+
+    for (const n of nodes) {
+      if (n.isPin) continue;
+      bc.fillStyle = GOLD;
       bc.beginPath();
-      bc.arc(n.x, n.y, 1.1, 0, Math.PI * 2);
+      bc.arc(n.x, n.y, 3.6, 0, Math.PI * 2);
+      bc.fill();
+      bc.fillStyle = GOLD_HI;
+      bc.beginPath();
+      bc.arc(n.x - 0.7, n.y - 0.7, 2.9, 0, Math.PI * 2);
+      bc.fill();
+      bc.fillStyle = DRILL;
+      bc.beginPath();
+      bc.arc(n.x, n.y, 1.3, 0, Math.PI * 2);
       bc.fill();
     }
+
+    const corners = [[22, 22], [W - 22, 22], [22, H - 22], [W - 22, H - 22]];
+    for (const [x, y] of corners) {
+      bc.fillStyle = GOLD;
+      bc.beginPath();
+      bc.arc(x, y, 8, 0, Math.PI * 2);
+      bc.fill();
+      bc.fillStyle = GOLD_HI;
+      bc.beginPath();
+      bc.arc(x - 1, y - 1, 7, 0, Math.PI * 2);
+      bc.fill();
+      bc.fillStyle = DRILL;
+      bc.beginPath();
+      bc.arc(x, y, 3.4, 0, Math.PI * 2);
+      bc.fill();
+    }
+
+    bc.fillStyle = SILK_DIM;
+    bc.font = '600 7px "JetBrains Mono", ui-monospace, monospace';
+    bc.textBaseline = 'top';
+    bc.fillText('REV 0.3', 34, H - 16);
+    bc.textAlign = 'right';
+    bc.fillText('ZW//PCB', W - 34, H - 16);
+    bc.textAlign = 'left';
   }
 
   let last = performance.now();
@@ -414,30 +571,28 @@
     ctx.clearRect(0, 0, W, H);
     if (bg) ctx.drawImage(bg, 0, 0, W, H);
 
-    const [ar, ag, ab] = accentRGB();
-
     for (const p of pulses) {
       if (!reduceMotion) p.d += p.speed * dt;
       if (p.d > p.tr.total) {
         p.d = 0;
         p.tr = traces[Math.floor(Math.random() * traces.length)];
-        p.speed = 40 + Math.random() * 70;
-        p.intensity = 0.55 + Math.random() * 0.45;
+        p.speed = 55 + Math.random() * 90;
+        p.intensity = 0.6 + Math.random() * 0.4;
       }
       const pos = posAt(p.tr, p.d);
 
-      const g = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, 18);
-      g.addColorStop(0, `rgba(${ar},${ag},${ab},${0.6 * p.intensity})`);
-      g.addColorStop(0.4, `rgba(${ar},${ag},${ab},${0.22 * p.intensity})`);
-      g.addColorStop(1, `rgba(${ar},${ag},${ab},0)`);
+      const g = ctx.createRadialGradient(pos.x, pos.y, 0, pos.x, pos.y, 14);
+      g.addColorStop(0, `rgba(255, 245, 180, ${0.85 * p.intensity})`);
+      g.addColorStop(0.35, `rgba(240, 200, 60, ${0.42 * p.intensity})`);
+      g.addColorStop(1, 'rgba(240, 200, 60, 0)');
       ctx.fillStyle = g;
       ctx.beginPath();
-      ctx.arc(pos.x, pos.y, 18, 0, Math.PI * 2);
+      ctx.arc(pos.x, pos.y, 14, 0, Math.PI * 2);
       ctx.fill();
 
-      ctx.fillStyle = `rgba(255,255,255,${0.9 * p.intensity})`;
+      ctx.fillStyle = `rgba(255, 253, 230, ${Math.min(1, p.intensity + 0.2)})`;
       ctx.beginPath();
-      ctx.arc(pos.x, pos.y, 1.8, 0, Math.PI * 2);
+      ctx.arc(pos.x, pos.y, 1.7, 0, Math.PI * 2);
       ctx.fill();
     }
 
@@ -449,6 +604,10 @@
     cancelAnimationFrame(resizeRaf);
     resizeRaf = requestAnimationFrame(resize);
   });
+
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => { if (W > 0) build(); });
+  }
 
   resize();
   requestAnimationFrame(tick);
