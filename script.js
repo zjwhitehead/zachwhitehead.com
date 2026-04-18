@@ -7,8 +7,9 @@
   const particles = [];
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  const REACT_RADIUS = 140;
+  const REACT_RADIUS = 200;
   const LINK_DIST = 130;
+  const CURSOR_LINK_DIST = 170;
 
   function resize() {
     W = canvas.clientWidth = window.innerWidth;
@@ -63,9 +64,24 @@
         const d2 = dx * dx + dy * dy;
         if (d2 < REACT_RADIUS * REACT_RADIUS) {
           const d = Math.sqrt(d2) || 1;
-          const force = (1 - d / REACT_RADIUS) * 0.15;
+          const force = (1 - d / REACT_RADIUS) * 0.9;
           p.x += (dx / d) * force;
           p.y += (dy / d) * force;
+        }
+      }
+    }
+
+    if (mouse.active && !reduceMotion) {
+      for (const p of particles) {
+        const dx = p.x - mouse.x, dy = p.y - mouse.y;
+        const d2 = dx * dx + dy * dy;
+        if (d2 < CURSOR_LINK_DIST * CURSOR_LINK_DIST) {
+          const alpha = Math.pow(1 - Math.sqrt(d2) / CURSOR_LINK_DIST, 1.4) * 0.45;
+          ctx.strokeStyle = `rgba(${ar},${ag},${ab},${alpha})`;
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(mouse.x, mouse.y);
+          ctx.stroke();
         }
       }
     }
@@ -98,7 +114,7 @@
         const dx = p.x - mouse.x, dy = p.y - mouse.y;
         const d2 = dx * dx + dy * dy;
         if (d2 < REACT_RADIUS * REACT_RADIUS) {
-          glow = Math.min(1, glow + (1 - Math.sqrt(d2) / REACT_RADIUS) * 0.5);
+          glow = Math.min(1, glow + (1 - Math.sqrt(d2) / REACT_RADIUS) * 0.85);
         }
       }
 
