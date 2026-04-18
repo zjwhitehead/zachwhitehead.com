@@ -128,7 +128,7 @@ nav.top {
 @media (max-width: 760px) {
   .nav-inner { padding: 12px 18px; gap: 14px; }
   .nav-toggle { display: flex; }
-  .nav-cta { margin-left: 0; }
+  .nav-cta { display: none; }
 
   .nav-links {
     position: fixed;
@@ -168,6 +168,9 @@ nav.top {
   z-index: -1;
   pointer-events: none;
   overflow: hidden;
+  opacity: .92;
+  -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,.96), rgba(0,0,0,.88) 48%, rgba(0,0,0,.36) 76%, transparent 100%);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,.96), rgba(0,0,0,.88) 48%, rgba(0,0,0,.36) 76%, transparent 100%);
 }
 .bg-fixed svg {
   position: absolute;
@@ -383,6 +386,14 @@ nav.top {
   .scroll-hint { display: none; }
 }
 
+@media (max-width: 520px) {
+  .role {
+    font-size: 11px;
+    gap: 4px 8px;
+  }
+  .role span { white-space: normal; }
+}
+
 /* ============ ABOUT ============ */
 .about-grid {
   display: grid;
@@ -408,6 +419,29 @@ nav.top {
   font-size: 15.5px;
   line-height: 1.7;
   margin: 0 0 14px;
+}
+.about-note {
+  margin-top: 24px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(0,157,255,.06), rgba(17,19,22,.72));
+}
+.about-note-kicker {
+  display: inline-block;
+  margin-bottom: 10px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: .18em;
+  color: var(--accent);
+  text-transform: uppercase;
+}
+.about-note p {
+  margin: 0;
+}
+.about-note b {
+  color: var(--ink);
+  font-weight: 600;
 }
 .photo {
   position: relative;
@@ -458,7 +492,15 @@ nav.top {
   .about-grid { grid-template-columns: 1fr; gap: 36px; }
 }
 
-/* ============ SERVICES ============ */
+/* ============ PILLARS (Software / Hardware) ============ */
+.pillar-lead {
+  font-family: var(--serif);
+  font-size: clamp(19px, 2vw, 24px);
+  line-height: 1.5;
+  color: var(--ink);
+  max-width: 64ch;
+  margin: 0 0 32px;
+}
 .svc-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -468,6 +510,9 @@ nav.top {
   overflow: hidden;
   background: rgba(17,19,22,.45);
 }
+.svc-grid.pillar-grid {
+  grid-template-columns: repeat(3, 1fr);
+}
 .svc {
   padding: 32px;
   border-right: 1px solid var(--line);
@@ -476,7 +521,10 @@ nav.top {
   transition: background .2s;
 }
 .svc:nth-child(2n) { border-right: 0; }
+.svc-grid.pillar-grid .svc:nth-child(2n) { border-right: 1px solid var(--line); }
+.svc-grid.pillar-grid .svc:nth-child(3n) { border-right: 0; }
 .svc:nth-last-child(-n+2) { border-bottom: 0; }
+.svc-grid.pillar-grid .svc { border-bottom: 0; }
 .svc:hover { background: rgba(0,157,255,.04); }
 .svc:hover .svc-num { color: var(--ink); }
 .svc-num {
@@ -517,11 +565,145 @@ nav.top {
   border: 1px solid var(--line);
   border-radius: 4px;
 }
+@media (max-width: 900px) {
+  .svc-grid.pillar-grid { grid-template-columns: 1fr; }
+  .svc-grid.pillar-grid .svc { border-right: 0; border-bottom: 1px solid var(--line); }
+  .svc-grid.pillar-grid .svc:last-child { border-bottom: 0; }
+}
 @media (max-width: 760px) {
   .svc-grid { grid-template-columns: 1fr; }
   .svc { border-right: 0; padding: 26px; }
   .svc:nth-last-child(-n+2) { border-bottom: 1px solid var(--line); }
   .svc:last-child { border-bottom: 0; }
+}
+
+/* ============ FIRMWARE BRIDGE BAND ============ */
+.fw-band {
+  padding: 80px 0;
+  text-align: center;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background:
+    radial-gradient(ellipse 55% 120% at 50% 50%, rgba(0,157,255,.07), transparent 70%),
+    linear-gradient(to bottom, rgba(17,19,22,.0), rgba(17,19,22,.35), rgba(17,19,22,.0));
+  position: relative;
+  overflow: hidden;
+}
+.fw-band::before,
+.fw-band::after {
+  content: "";
+  position: absolute;
+  left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, rgba(0,157,255,.45), transparent);
+}
+.fw-band::before { top: 0; }
+.fw-band::after { bottom: 0; }
+.fw-band-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+.fw-kicker {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: .22em;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.fw-kicker::before,
+.fw-kicker::after {
+  content: "";
+  width: 32px;
+  height: 1px;
+  background: var(--accent);
+  opacity: .55;
+}
+.fw-band h3 {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(26px, 3.2vw, 38px);
+  margin: 0 0 14px;
+  letter-spacing: -.015em;
+  line-height: 1.1;
+}
+.fw-band p {
+  color: var(--ink-dim);
+  font-size: 16px;
+  line-height: 1.65;
+  margin: 0;
+  max-width: 56ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+@media (max-width: 760px) {
+  .fw-band { padding: 60px 0; }
+  .fw-band p { font-size: 15px; }
+}
+
+/* ============ HARDWARE SHOWCASE (PCB canvas) ============ */
+.hw-showcase {
+  position: relative;
+  aspect-ratio: 21 / 9;
+  border: 1px solid var(--line-2);
+  border-radius: 14px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #0d1016, #0a0b0d 70%);
+  margin-bottom: 44px;
+}
+.hw-showcase canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+.hw-showcase::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(10,11,13,.95) 0%, rgba(10,11,13,.35) 45%, transparent 75%);
+  z-index: 1;
+  pointer-events: none;
+}
+.hw-showcase-text {
+  position: absolute;
+  left: 36px;
+  right: 36px;
+  bottom: 32px;
+  z-index: 2;
+  pointer-events: none;
+}
+.hw-showcase-text h3 {
+  font-family: var(--display);
+  font-weight: 500;
+  font-size: clamp(28px, 4vw, 44px);
+  line-height: 1;
+  margin: 0 0 10px;
+  letter-spacing: -.02em;
+}
+.hw-showcase-text h3 em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--accent);
+}
+.hw-showcase-text p {
+  margin: 0;
+  color: var(--ink-dim);
+  font-size: 15px;
+  max-width: 60ch;
+  line-height: 1.55;
+}
+@media (max-width: 760px) {
+  .hw-showcase { aspect-ratio: 3 / 2; }
+  .hw-showcase-text { left: 20px; right: 20px; bottom: 20px; }
+  .hw-showcase-text h3 { line-height: 1.05; }
 }
 
 /* ============ AVIATION ============ */
@@ -613,6 +795,7 @@ nav.top {
 @media (max-width: 760px) {
   .av-hero { aspect-ratio: 3 / 2; }
   .av-hero-text { left: 20px; right: 20px; bottom: 20px; }
+  .av-hero-text h3 { line-height: 1.05; }
   .av-meta { grid-template-columns: repeat(2, 1fr); }
   .av-meta > div { border-bottom: 1px solid var(--line); }
   .av-meta > div:nth-child(2) { border-right: 0; }
@@ -840,6 +1023,7 @@ nav.top {
 .social-list a:hover .arr { color: var(--accent); }
 @media (max-width: 760px) {
   .contact { grid-template-columns: 1fr; padding: 36px 24px; }
+  .contact .sub { max-width: none; }
 }
 
 /* ============ FOOTER ============ */
