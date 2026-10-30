@@ -362,7 +362,7 @@
   gnd('U6', [[184, 125], [196, 125]]);
   add('VBAT', [[184, 113], [244, 113]], VBAT);
   add('VBAT', [[196, 113], [196, 60]], VBAT);
-  add('VBAT', [[244, 137], [226, 137], [226, 113]], { info: 'Regulator enable tied to its input, so it is always on', from: 'U4 EN', to: 'VBAT' });
+  add('VBAT', [[244, 137], [226, 137], [226, 113]], { info: 'Regulator enable pin tied to its input to keep it on', from: 'U4 EN', to: 'VBAT' });
   add('VBAT', [[226, 137], [226, 150]], { info: 'Top of the battery divider', from: 'VBAT', to: 'R7 100 kΩ' });
   gnd('J3', [[224, 60], [224, 74]]);
   gnd('C15', [[210, 125], [210, 135]]);
@@ -1154,7 +1154,7 @@
     } catch {
       label.textContent = 'Copy email';
       selectAddress();
-      status.textContent = 'Copy unavailable. The address above is selected so you can copy it yourself.';
+      status.textContent = 'Your browser blocked copying. I selected the address above so you can copy it.';
     }
     resetTimer = setTimeout(() => {
       label.textContent = 'Copy email';
